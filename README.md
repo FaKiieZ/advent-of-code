@@ -23,3 +23,10 @@
 -   Navigate to the wanted year and day folder. For example `cd 2024/C++/1` for year 2024 and day 1.
 -   Build the `solution.cpp` file by running `cl solution.cpp` in the correct folder
 -   Execute the built exe file `.\solution.exe`
+
+## Go Solutions
+
+### Run
+
+-   Navigate to the wanted year and day folder. For example `cd 2024/Go/1` for year 2024 and day 1.
+-   `go run solution.go` runs the go script with the go tool
