@@ -23,18 +23,15 @@ def solution():
     print("list2:", list2)
 
     totalDistance = 0
-
-    for i in range(len(list1)):
-        totalDistance += abs(list1[i] - list2[i])
-
-    print("total distance:", totalDistance)
-
     totalSimilarityScore = 0
 
     for i in range(len(list1)):
         item1 = list1[i]
-        amountOfOccurrencesInList2 = list2.count(item1)
 
+        totalDistance += abs(item1 - list2[i])
+
+        amountOfOccurrencesInList2 = list2.count(item1)
         totalSimilarityScore += item1 * amountOfOccurrencesInList2
 
+    print("total distance:", totalDistance)
     print("total similarity score:", totalSimilarityScore)
