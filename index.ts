@@ -2,8 +2,11 @@ import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
 
-async function loadSolutions(baseDir: string, year?: string, day?: string) {
-    // Read the base directory (e.g., 'src')
+async function loadSolutions(
+    baseDir: string,
+    year: string | undefined,
+    day: string | undefined
+) {
     const yearFolders = fs
         .readdirSync(baseDir)
         .filter(
@@ -34,7 +37,7 @@ async function loadSolutions(baseDir: string, year?: string, day?: string) {
                 const jsSolutionPath = path.join(
                     typeScriptPath,
                     day,
-                    "solution.js" // Transpiled JavaScript
+                    "solution.js"
                 );
 
                 if (fs.existsSync(jsSolutionPath)) {
@@ -42,7 +45,6 @@ async function loadSolutions(baseDir: string, year?: string, day?: string) {
                         `Loading solution for Year: ${year}, Day: ${day}`
                     );
 
-                    // Dynamically import the solution
                     const module = await import(
                         pathToFileURL(jsSolutionPath).href
                     );
