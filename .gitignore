@@ -1,0 +1,13 @@
+node_modules/
+output/
+
+**/input.txt
+
+# Python
+**/__pycache__/
+
+# C++
+**/C++/**/*.exe
+**/C++/**/*.ilk
+**/C++/**/*.obj
+**/C++/**/*.pdb

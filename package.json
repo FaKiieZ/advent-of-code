@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  },
+  "scripts": {
+    "start": "tsc && node output/index.js"
+  },
+  "type": "module",
+  "prettier": {
+    "tabWidth": 4
+  }
+}
