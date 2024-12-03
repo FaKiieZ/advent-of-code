@@ -28,9 +28,9 @@ type NumberWithBooleanTuple = [number, boolean];
 function solution2(data: string): void {
     const regex = /(do\(\))|(don't\(\))|(mul\((\d+),(\d+)\))/g;
 
-    const matches = data.matchAll(regex);
+    const matches = Array.from(data.matchAll(regex));
 
-    const instructionsWithArgs = matches.toArray().map((match) => {
+    const instructionsWithArgs = matches.map((match) => {
         const instruction = match[1] || match[2] || match[3];
 
         if (instruction === Instruction.do) {
@@ -48,7 +48,7 @@ function solution2(data: string): void {
         }
     });
 
-    const total = instructionsWithArgs.reduce(
+    const [total, _] = instructionsWithArgs.reduce(
         ([sum, isEnabled]: NumberWithBooleanTuple, { instruction, args }) => {
             switch (instruction) {
                 case Instruction.do:
