@@ -1,5 +1,7 @@
 node_modules/
-output/
+
+**/*.js
+!jest.config.js
 
 **/input.txt
 

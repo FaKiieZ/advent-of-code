@@ -1,6 +1,8 @@
-import { readInputFile } from "../../../lib.js";
+import { readInputFile } from "../../../lib";
 
-function solution(data: string): void {
+function solution(): void {
+    const data = readInputFile(__dirname);
+
     const list1: number[] = [];
     const list2: number[] = [];
 
@@ -46,4 +48,4 @@ function solution(data: string): void {
     console.log("total similarity score of the 2 lists:", totalSimilarityScore);
 }
 
-readInputFile(solution);
+solution();

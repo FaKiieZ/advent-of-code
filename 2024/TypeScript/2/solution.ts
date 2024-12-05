@@ -1,11 +1,9 @@
-import { readInputFile } from "../../../lib.js";
+import { readInputFile } from "../../../lib";
 
 function isDistanceBetweenValuesLowerThan(x: number, y: number): boolean {
     const distanceBetweenValues = Math.abs(x - y);
     return distanceBetweenValues < 1 || distanceBetweenValues > 3;
 }
-
-function isDecreasing() {}
 
 // TODO: refactor this fucking mess :P
 function validateReport(report: number[]): true | number {
@@ -75,7 +73,9 @@ function filterValidReports(
     });
 }
 
-function solution(data: string): void {
+function solution(): void {
+    const data = readInputFile(__dirname);
+
     const reports: number[][] = [];
 
     data.split("\r\n").forEach((line) => {
@@ -101,4 +101,4 @@ function solution(data: string): void {
     );
 }
 
-readInputFile(solution);
+solution();

@@ -1,14 +1,19 @@
 {
-  "devDependencies": {
-    "@types/node": "^22.10.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.2"
-  },
-  "scripts": {
-    "start": "tsc && node output/index.js"
-  },
-  "type": "module",
-  "prettier": {
-    "tabWidth": 4
-  }
+    "scripts": {
+        "clean": "tsc --build --clean",
+        "build": "npm run clean && tsc",
+        "start": "npm run build && ts-node index.ts",
+        "test": "npm run build && jest"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.14",
+        "jest": "^29.7.0",
+        "nodemon": "^3.1.7",
+        "ts-jest": "^29.2.5",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.7.2"
+    },
+    "prettier": {
+        "tabWidth": 4
+    }
 }

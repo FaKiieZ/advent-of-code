@@ -1,4 +1,4 @@
-import { readInputFile } from "../../../lib.js";
+import { readInputFile } from "../../../lib";
 
 function solution1(data: string): void {
     const regex = /mul\((\d+),(\d+)\)/g;
@@ -78,9 +78,11 @@ function solution2(data: string): void {
     console.log("total of all multiplications with do/don't:", total);
 }
 
-function solution(data: string): void {
+function solution(): void {
+    const data = readInputFile(__dirname);
+
     solution1(data);
     solution2(data);
 }
 
-readInputFile(solution);
+solution();

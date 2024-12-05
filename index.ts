@@ -1,82 +1,64 @@
-import fs from "fs";
-import path from "path";
-import { pathToFileURL } from "url";
+import { execSync } from "child_process";
+import { existsSync } from "fs";
 
-async function loadSolutions(
-    baseDir: string,
-    year: string | undefined,
-    day: string | undefined
-) {
-    const yearFolders = fs
-        .readdirSync(baseDir)
-        .filter(
-            (item) =>
-                fs.statSync(path.join(baseDir, item)).isDirectory() &&
-                /^\d{4}$/.test(item)
-        ) // Only year-named folders
-        .filter((item) => !year || item === year) // Filter by year if specified
-        .sort((a, b) => parseInt(a) - parseInt(b)); // Sort by year ascending
+const getSolution = (year, day) => {
+    const directory = `${__dirname}\\${year}\\TypeScript\\${day}`;
+    const file = `${directory}\\solution.ts`;
 
-    for (const year of yearFolders) {
-        const yearPath = path.join(baseDir, year);
-        const typeScriptPath = path.join(yearPath, "TypeScript");
+    return { directory, file };
+};
 
-        if (fs.existsSync(typeScriptPath)) {
-            const dayFolders = fs
-                .readdirSync(typeScriptPath)
-                .filter(
-                    (item) =>
-                        fs
-                            .statSync(path.join(typeScriptPath, item))
-                            .isDirectory() && /^\d+$/.test(item)
-                ) // Only numeric day folders
-                .filter((item) => !day || item === day) // Filter by day if specified
-                .sort((a, b) => parseInt(a) - parseInt(b)); // Sort by day ascending
+const dev = (year, day) => {
+    const { directory, file } = getSolution(year, day);
+    const command = 'nodemon -x "cls && ts-node" ' + file;
 
-            for (const day of dayFolders) {
-                const jsSolutionPath = path.join(
-                    typeScriptPath,
-                    day,
-                    "solution.js"
-                );
+    if (!existsSync(file))
+        throw new Error(
+            `🔍 Year ${year} Day ${day} file does not exist.\nRunning '${command}' would fail.`
+        );
 
-                if (fs.existsSync(jsSolutionPath)) {
-                    console.log(
-                        `Loading solution for Year: ${year}, Day: ${day}`
-                    );
+    execSync(command, { stdio: "inherit", cwd: directory });
+};
 
-                    const module = await import(
-                        pathToFileURL(jsSolutionPath).href
-                    );
+const runAllOfYear = (year) => {
+    let day = 1;
 
-                    console.log(
-                        `Executed solution for Year: ${year}, Day: ${day}`,
-                        module
-                    );
-                } else {
-                    console.log(
-                        `No transpiled solution.js found for Year: ${year}, Day: ${day}`
-                    );
-                }
-            }
-        } else {
-            console.log(`No TypeScript directory found for Year: ${year}`);
-        }
+    while (existsSync(getSolution(year, day).file)) {
+        const { directory, file } = getSolution(year, day);
+        console.log(`Running year ${year}, day ${day} (${file}):`);
+        execSync("ts-node " + file, { stdio: "inherit", cwd: directory });
+        day++;
     }
+};
+
+const runAllYears = () => {
+    let year = 2024;
+
+    console.log("Running all years:", `${__dirname}\\${year}`);
+    while (existsSync(`${__dirname}\\${year}`)) {
+        console.log(`Running year ${year}:`);
+        runAllOfYear(year);
+        year++;
+    }
+};
+
+const numericalArgs = process.argv
+    .filter((arg) => /^\d+$/.test(arg))
+    .map(Number);
+
+const arg0 = numericalArgs[0];
+const arg1 = numericalArgs[1];
+
+if (numericalArgs.length === 2) {
+    dev(arg0, arg1);
+} else if (numericalArgs.length === 1) {
+    if (arg0 >= 2015) {
+        runAllOfYear(arg0);
+    } else {
+        throw new Error(
+            "☝️ Providing a single argument will run all days of that year. Must be 2024 or later."
+        );
+    }
+} else {
+    runAllYears();
 }
-
-const args = process.argv.slice(2);
-let year: string | undefined;
-let day: string | undefined;
-
-if (args.length == 1) {
-    year = args[0];
-} else if (args.length == 2) {
-    year = args[0];
-    day = args[1];
-}
-
-// Start loading solutions from the base directory
-loadSolutions(path.resolve("./output"), year, day).catch((err) => {
-    console.error("Error loading solutions:", err);
-});
