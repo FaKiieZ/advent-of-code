@@ -10,7 +10,7 @@ const getSolution = (year, day) => {
 
 const dev = (year, day) => {
     const { directory, file } = getSolution(year, day);
-    const command = 'nodemon -x "cls && ts-node" ' + file;
+    const command = "ts-node " + file;
 
     if (!existsSync(file))
         throw new Error(

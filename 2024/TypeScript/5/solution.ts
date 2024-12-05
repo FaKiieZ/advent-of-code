@@ -1,4 +1,8 @@
 import { readInputFile } from "../../../lib";
+import {
+    filterValidPageUpdatesByOrderingRules,
+    getSumOfMiddleNumbersOfPageUpdates,
+} from "./helpers";
 
 export const solution = (): void => {
     const data = readInputFile(__dirname);
@@ -8,12 +12,41 @@ export const solution = (): void => {
     const indexOfSplitElement = dataAsArray.indexOf(splitElement);
 
     const orderingRules = dataAsArray.slice(0, indexOfSplitElement);
-    const pagesToProduce = dataAsArray.slice(indexOfSplitElement + 1);
+    const pagesToProduceLines = dataAsArray.slice(indexOfSplitElement + 1);
 
-    console.log(orderingRules, pagesToProduce);
+    const validPageUpdates: string[][] = [];
+    const invalidPageUpdates: string[][] = [];
 
-    // console.log("All matches:", count);
-    // console.log("All matches in x shape:", countInXShape);
+    pagesToProduceLines
+        .map((line) => line.split(","))
+        .forEach((pageUpdates) =>
+            filterValidPageUpdatesByOrderingRules(pageUpdates, orderingRules)
+                ? validPageUpdates.push(pageUpdates)
+                : invalidPageUpdates.push(pageUpdates)
+        );
+
+    const middleNumberSumOfValidPageUpdates =
+        getSumOfMiddleNumbersOfPageUpdates(validPageUpdates);
+
+    console.log(
+        "Sum of middle numbers of valid page updates:",
+        middleNumberSumOfValidPageUpdates
+    );
+
+    invalidPageUpdates.forEach(
+        (pageUpdates) =>
+            filterValidPageUpdatesByOrderingRules(pageUpdates, orderingRules, {
+                fixInvalidPageUpdates: true,
+            }) as string[]
+    );
+
+    const middleNumberSumOfFixedInvalidPageUpdates =
+        getSumOfMiddleNumbersOfPageUpdates(invalidPageUpdates);
+
+    console.log(
+        "Sum of middle numbers of fixed invalid page updates:",
+        middleNumberSumOfFixedInvalidPageUpdates
+    );
 };
 
 solution();
