@@ -156,6 +156,10 @@ export const solution = (): void => {
     console.log("unique coords count:", uniqueCoordsCount);
 
     // Part 2
+    console.log(
+        "Calculating possible additional obstacle positions. This takes a while..."
+    );
+
     const initialGuardInfo = getGuardCoordinatesAndDirOnMap(rowsAndCols);
     const additionalObstaclePositions = [];
 
