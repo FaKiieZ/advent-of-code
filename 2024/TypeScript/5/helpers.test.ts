@@ -18,9 +18,8 @@ describe("isPageUpdateValidByOrderingRules", () => {
         expect(result).toBe(false);
     });
 
-    // TODO: Why is this test failing?
     it("should fix wrong ordering in page updates with rule violations", () => {
-        const orderingRules = ["1|2", "3|2", "4|1"];
+        const orderingRules = ["1|2", "3|2", "4|1", "1|3"];
 
         const pagesToProduceString = "1,2,3,4";
         const pagesToProduce = pagesToProduceString.split(",");
