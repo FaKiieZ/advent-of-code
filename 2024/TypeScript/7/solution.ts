@@ -1,32 +1,5 @@
 import { readInputFile } from "../../../lib";
-
-type ResultWithValues = {
-    result: number;
-    values: number[];
-};
-
-const possibleOperators = ["+", "*"];
-
-export const factorial = (num: number) => {
-    let fact = 1;
-    for (let i = 1; i <= num; i++) {
-        fact = fact * i;
-    }
-
-    return fact;
-};
-
-export const canBeSolvedWithPossibleOperators = (
-    resultWithValues: ResultWithValues
-): boolean => {
-    const { result, values } = resultWithValues;
-
-    const possibleCombinations = factorial(values.length);
-
-    console.log("Possible combinations: ", possibleCombinations);
-
-    return true;
-};
+import { canBeSolvedWithPossibleOperators } from "./helpers";
 
 export const solution = () => {
     const data = readInputFile(__dirname).split("\r\n");
@@ -39,7 +12,36 @@ export const solution = () => {
         return { result, values };
     });
 
-    canBeSolvedWithPossibleOperators(resultsWithValues[0]);
+    const solvableExpressions = resultsWithValues.filter((r) =>
+        canBeSolvedWithPossibleOperators(r)
+    );
+
+    const sumOfResultsOfSolvableExpressions = solvableExpressions.reduce(
+        (acc, current) => acc + current.result,
+        0
+    );
+
+    console.log(
+        "Sum of results of solvable expressions:",
+        sumOfResultsOfSolvableExpressions
+    );
+
+    const solvableExpressionsWithConcatenation = resultsWithValues.filter((r) =>
+        canBeSolvedWithPossibleOperators(r, {
+            includeConcatenationOperator: true,
+        })
+    );
+
+    const sumOfResultsOfSolvableExpressionsWithConcatenation =
+        solvableExpressionsWithConcatenation.reduce(
+            (acc, current) => acc + current.result,
+            0
+        );
+
+    console.log(
+        "Sum of results of solvable expressions with concatenation:",
+        sumOfResultsOfSolvableExpressionsWithConcatenation
+    );
 };
 
 solution();

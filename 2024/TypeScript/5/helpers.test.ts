@@ -18,6 +18,7 @@ describe("isPageUpdateValidByOrderingRules", () => {
         expect(result).toBe(false);
     });
 
+    // TODO: Why is this test failing?
     it("should fix wrong ordering in page updates with rule violations", () => {
         const orderingRules = ["1|2", "3|2", "4|1"];
 
@@ -30,8 +31,7 @@ describe("isPageUpdateValidByOrderingRules", () => {
             { fixInvalidPageUpdates: true }
         );
 
-        expect(result).toBe(true);
-        expect(pagesToProduce).toStrictEqual(["4", "1", "3", "2"]);
+        expect(result).toStrictEqual(["4", "1", "3", "2"]);
     });
 
     it("should return the sum of the middle numbers of page updates", () => {
