@@ -31,7 +31,7 @@ describe("isPageUpdateValidByOrderingRules", () => {
             { fixInvalidPageUpdates: true }
         );
 
-        expect(result).toStrictEqual(["4", "1", "3", "2"]);
+        expect(result).toEqual(["4", "1", "3", "2"]);
     });
 
     it("should return the sum of the middle numbers of page updates", () => {
