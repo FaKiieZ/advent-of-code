@@ -54,8 +54,6 @@ describe("getAntinodePositionsForAntennas", () => {
 
         const result = getAntinodePositionsForAntennas(antennas, 6, 6);
 
-        console.log(result);
-
         expect(result).toEqual(expectedAntinodePositions);
     });
 
@@ -95,8 +93,6 @@ describe("getAntinodePositionsForAntennas", () => {
         const result = getAntinodePositionsForAntennas(antennas, 6, 6, {
             createAllAntinodesInLine: true,
         });
-
-        console.log(result);
 
         expect(result).toEqual(expectedAntinodePositions);
     });

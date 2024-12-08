@@ -7,7 +7,6 @@ describe("searchWordInMatrix", () => {
             ["S", "A", "M", "X"],
             ["X", "A", "S", "M"],
         ];
-        console.log(data);
         const matches = searchWordInMatrix(data, "XMAS");
         expect(matches).toBe(2);
     });
