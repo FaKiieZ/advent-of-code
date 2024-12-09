@@ -90,6 +90,9 @@ export const defragmentStorageByFiles = (
         let checkedAllBlocks = false;
         let lastCheckedBlockIndex = -1;
 
+        // This is inperformant af because i need to check for free spaces from the beginning for every identifier.
+        // Maybe store the free space segments somehow?
+        // Or maybe just store the free space blocks and check if the needed space is in there?
         while (!hasEnoughSpace && !checkedAllBlocks) {
             const firstFreeSpaceIndex = storageBlocksCopy.findIndex(
                 (b, bIndex) => b.isFreeSpace && bIndex > lastCheckedBlockIndex
