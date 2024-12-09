@@ -3,7 +3,6 @@ import {
     defragmentStorageByFiles,
     getStorageBlocks,
     getSystemChecksum as getStorageBlocksChecksum,
-    StorageBlock,
 } from "./helpers";
 import {
     expectedDefragmentedByFilesStorageBlocks,
