@@ -1,10 +1,16 @@
 import {
-    defragmentStorage,
-    defragmentStorageString,
+    defragmentStorage as defragmentStorageBlocks,
+    defragmentStorageByFiles,
     getStorageBlocks,
-    getStorageString,
-    getSystemChecksum,
+    getSystemChecksum as getStorageBlocksChecksum,
+    StorageBlock,
 } from "./helpers";
+import {
+    expectedDefragmentedByFilesStorageBlocks,
+    expectedDefragmentedStorageBlocks,
+    expectedStorageBlocks,
+    storageBlocksToDefragmentByFile,
+} from "./helpers.testdata";
 
 describe("day 9", () => {
     it("should return the correct storage blocks", () => {
@@ -12,80 +18,40 @@ describe("day 9", () => {
 
         const result = getStorageBlocks(data);
 
-        expect(result).toEqual([
-            { id: "0", length: 1, isFreeSpace: false },
-            { id: null, length: 2, isFreeSpace: true },
-            { id: "1", length: 3, isFreeSpace: false },
-            { id: null, length: 4, isFreeSpace: true },
-            { id: "2", length: 5, isFreeSpace: false },
-            { id: null, length: 6, isFreeSpace: true },
-        ]);
+        expect(result).toEqual(expectedStorageBlocks);
     });
 
-    it("should return the storage as string", () => {
-        const storageBlocks = [
-            { id: "0", length: 1, isFreeSpace: false },
-            { id: null, length: 2, isFreeSpace: true },
-            { id: "1", length: 3, isFreeSpace: false },
-            { id: null, length: 4, isFreeSpace: true },
-            { id: "2", length: 5, isFreeSpace: false },
-            { id: null, length: 6, isFreeSpace: true },
-        ];
+    it("should defragment the storage", () => {
+        const result = defragmentStorageBlocks(expectedStorageBlocks);
 
-        const result = getStorageString(storageBlocks);
-
-        expect(result).toBe("0..111....22222......");
+        expect(result).toStrictEqual(expectedDefragmentedStorageBlocks);
     });
 
-    it("should defragment the storage string", () => {
-        const storageString = "0..111....22222......";
+    it("should defragment the storage by files", () => {
+        const result = defragmentStorageByFiles(
+            storageBlocksToDefragmentByFile
+        );
 
-        const result = defragmentStorageString(storageString);
-
-        expect(result).toBe("022111222............");
+        expect(result).toStrictEqual(expectedDefragmentedByFilesStorageBlocks);
     });
 
     it("should return the system checksum", () => {
-        const storageString = "022111222............";
-
-        const result = getSystemChecksum(storageString);
+        const result = getStorageBlocksChecksum(
+            expectedDefragmentedStorageBlocks
+        );
 
         // 0 + 2 + 4 + 3 + 4 + 5 + 12 + 14 + 16 = 60
         expect(result).toBe(60);
     });
 
-    it("should return correct values for the example", () => {
+    it("should return correct checksum for the provided example", () => {
         const data = "2333133121414131402";
 
         const storageBlocks = getStorageBlocks(data);
-        const storageString = getStorageString(storageBlocks);
         const defragmentedStorageString =
-            defragmentStorageString(storageString);
-        const systemChecksum = getSystemChecksum(defragmentedStorageString);
+            defragmentStorageBlocks(storageBlocks);
+        const checksum = getStorageBlocksChecksum(defragmentedStorageString);
 
-        expect(storageString).toEqual(
-            "00...111...2...333.44.5555.6666.777.888899"
-        );
-        expect(defragmentedStorageString).toEqual(
-            "0099811188827773336446555566.............."
-        );
-        expect(systemChecksum).toEqual(1928);
-    });
-
-    // STARTING FROM HERE THE REAL TESTS BEGIN... before were only tests with identifiers up to 9... which is why they are working :(
-    it("should defragment the storage blocks", () => {
-        const data = "123456";
-
-        const storageBlocks = getStorageBlocks(data);
-
-        console.log(storageBlocks);
-
-        const defragmentedStorage = defragmentStorage(storageBlocks);
-
-        console.log(defragmentedStorage);
-
-        const result = getStorageString(defragmentedStorage);
-
-        expect(result).toBe("022111222............");
+        expect(checksum).toEqual(1928);
     });
 });

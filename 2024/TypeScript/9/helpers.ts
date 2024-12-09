@@ -1,157 +1,140 @@
-// TODO: REFACTOR ALL OF THIS... this shit is not working with identifiers larger than 9
-
 export type StorageBlock = {
     id: string | null;
-    length: number;
     isFreeSpace: boolean;
 };
 
 export const getStorageBlocks = (data: string): StorageBlock[] => {
     let currentId = 0;
 
-    return data.split("").map((block, index) => {
-        const isFreeSpace = index % 2 === 1;
+    const result: StorageBlock[] = [];
 
-        return {
-            id: isFreeSpace ? null : String(currentId++),
-            length: parseInt(block),
-            isFreeSpace,
-        };
-    });
-};
+    data.split("")
+        .map(Number)
+        .forEach((block, index) => {
+            const isFreeSpace = index % 2 === 1;
 
-export const getStorageString = (storageBlocks: StorageBlock[]): string => {
-    let result = "";
+            for (let i = 0; i < block; i++) {
+                result.push({
+                    id: isFreeSpace ? null : String(currentId),
+                    isFreeSpace,
+                });
+            }
 
-    storageBlocks.forEach((block) => {
-        if (block.isFreeSpace) {
-            result += ".".repeat(block.length);
-        } else {
-            result += block.id!.repeat(block.length);
-        }
-    });
+            if (!isFreeSpace) {
+                currentId++;
+            }
+        });
 
     return result;
 };
 
-export const getLastNonFreeBlockIndex = (storageString: string): number => {
-    const storageSplitted = storageString.split("");
-
-    for (let i = storageSplitted.length - 1; i >= 0; i--) {
-        const hasAnyFreeSpaceBefore = storageSplitted
-            .slice(0, i)
-            .some((block) => block === ".");
-
-        if (!hasAnyFreeSpaceBefore) {
-            return -1;
-        }
-
-        if (storageSplitted[i] !== ".") {
-            return i;
-        }
-    }
-
-    return -1;
-};
-
-export const defragmentStorageString = (storageString: string): string => {
-    const storageSplitted = storageString.split("");
-    let storageStringCopy = storageString;
-
-    const replacedBlockIndexes: number[] = [];
-
-    let result = "";
-
-    for (let i = 0; i < storageSplitted.length; i++) {
-        if (storageSplitted[i] === ".") {
-            if (
-                i + 1 ===
-                replacedBlockIndexes[replacedBlockIndexes.length - 1]
-            ) {
-                break;
-            }
-
-            const lastNonFreeBlockIndex =
-                getLastNonFreeBlockIndex(storageStringCopy);
-            if (lastNonFreeBlockIndex === -1) {
-                result += ".";
-            } else {
-                result += storageSplitted[lastNonFreeBlockIndex];
-
-                storageStringCopy = storageStringCopy.substring(
-                    0,
-                    lastNonFreeBlockIndex
-                );
-                replacedBlockIndexes.push(lastNonFreeBlockIndex);
-            }
-        } else if (!replacedBlockIndexes.includes(i)) {
-            result += storageSplitted[i];
-        } else {
-            break;
-        }
-    }
-
-    result += ".".repeat(storageString.length - result.length);
-
-    return result;
-};
-
-// TODO: this was the first refactor try, but it's not working because it moves whole blocks of one identifier. Instead it should move block by block of each identifier.
 export const defragmentStorage = (
     storageBlocks: StorageBlock[]
 ): StorageBlock[] => {
     let storageBlocksCopy = [...storageBlocks];
 
-    const replacedBlockIndexes: number[] = [];
-
-    const result: StorageBlock[] = [];
-
-    let lastCopiedBlockIndex = -1;
+    let lastReplacedBlockIndex: number;
 
     for (let i = 0; i < storageBlocks.length; i++) {
-        if (storageBlocks[i].isFreeSpace) {
-            if (
-                i + 1 ===
-                replacedBlockIndexes[replacedBlockIndexes.length - 1]
-            ) {
-                break;
-            }
+        const hasAnyBlocksLeftToDefragment = storageBlocksCopy
+            .slice(i, lastReplacedBlockIndex)
+            .some((b) => !b.isFreeSpace);
 
+        if (!hasAnyBlocksLeftToDefragment) {
+            break;
+        }
+
+        if (storageBlocks[i].isFreeSpace) {
             const lastNonFreeBlockIndex = storageBlocksCopy.findLastIndex(
                 (b) => !b.isFreeSpace
             );
 
-            // switch elements: free space with last non-free block
-            if (
-                lastNonFreeBlockIndex !== -1 &&
-                !replacedBlockIndexes.includes(lastNonFreeBlockIndex)
-            ) {
+            // move blocks
+            if (lastNonFreeBlockIndex !== -1) {
                 const lastNonFreeBlock =
                     storageBlocksCopy[lastNonFreeBlockIndex];
 
-                storageBlocksCopy[lastNonFreeBlockIndex] = storageBlocks[i];
+                storageBlocksCopy[lastNonFreeBlockIndex] = storageBlocksCopy[i];
                 storageBlocksCopy[i] = lastNonFreeBlock;
 
-                replacedBlockIndexes.push(lastNonFreeBlockIndex);
-            } else {
-                result.push(storageBlocks[i]);
+                lastReplacedBlockIndex = lastNonFreeBlockIndex;
             }
-        } else if (!replacedBlockIndexes.includes(i)) {
-            result.push(storageBlocks[i]);
-        } else {
-            break;
         }
     }
 
-    return result;
+    return storageBlocksCopy;
 };
 
-export const getSystemChecksum = (storageString: string): number => {
-    return storageString.split("").reduce((acc, block, index) => {
-        if (block === ".") {
+export const defragmentStorageByFiles = (
+    storageBlocks: StorageBlock[]
+): StorageBlock[] => {
+    let storageBlocksCopy = [...storageBlocks];
+
+    const maxIdentifier = Math.max(
+        ...storageBlocksCopy
+            .filter((b) => !b.isFreeSpace)
+            .map((b) => Number(b.id))
+    );
+
+    for (let i = maxIdentifier; i > 0; i--) {
+        const startIndex = storageBlocksCopy.findIndex(
+            (b) => !b.isFreeSpace && b.id === String(i)
+        );
+        const endIndex = storageBlocksCopy.findLastIndex(
+            (b) => !b.isFreeSpace && b.id === String(i)
+        );
+
+        const neededFreeSpace = endIndex - startIndex + 1;
+
+        let hasEnoughSpace = false;
+        let checkedAllBlocks = false;
+        let lastCheckedBlockIndex = -1;
+
+        while (!hasEnoughSpace && !checkedAllBlocks) {
+            const firstFreeSpaceIndex = storageBlocksCopy.findIndex(
+                (b, bIndex) => b.isFreeSpace && bIndex > lastCheckedBlockIndex
+            );
+
+            const lastNeededFreeSpaceIndex =
+                firstFreeSpaceIndex + neededFreeSpace - 1;
+
+            const blocksToCheckForFreeSpace = storageBlocksCopy.slice(
+                firstFreeSpaceIndex,
+                lastNeededFreeSpaceIndex + 1
+            );
+            hasEnoughSpace =
+                blocksToCheckForFreeSpace.length === neededFreeSpace &&
+                blocksToCheckForFreeSpace.every((b) => b.isFreeSpace);
+
+            checkedAllBlocks = firstFreeSpaceIndex === -1;
+
+            if (!checkedAllBlocks) {
+                lastCheckedBlockIndex = firstFreeSpaceIndex;
+            }
+        }
+
+        if (hasEnoughSpace && startIndex > lastCheckedBlockIndex) {
+            // move blocks
+            for (let j = startIndex; j <= endIndex; j++) {
+                const block = storageBlocksCopy[j];
+
+                storageBlocksCopy[j] = storageBlocksCopy[lastCheckedBlockIndex];
+
+                storageBlocksCopy[lastCheckedBlockIndex] = block;
+                lastCheckedBlockIndex++;
+            }
+        }
+    }
+
+    return storageBlocksCopy;
+};
+
+export const getSystemChecksum = (storageBlocks: StorageBlock[]): number => {
+    return storageBlocks.reduce((acc, block, index) => {
+        if (block.isFreeSpace) {
             return acc;
         }
 
-        return (acc += index * Number(block));
+        return (acc += index * Number(block.id));
     }, 0);
 };

@@ -1,8 +1,8 @@
 import { readInputFile } from "../../../lib";
 import {
-    defragmentStorageString,
+    defragmentStorage,
+    defragmentStorageByFiles,
     getStorageBlocks,
-    getStorageString,
     getSystemChecksum,
 } from "./helpers";
 
@@ -10,16 +10,17 @@ export const solution = () => {
     const data = readInputFile(__dirname);
 
     const storageBlocks = getStorageBlocks(data);
-    console.log("Storage blocks:", storageBlocks);
+    const defragmentedStorageBlocks = defragmentStorage(storageBlocks);
 
-    const storageString = getStorageString(storageBlocks);
-    const defragmentedStorageString = defragmentStorageString(storageString);
+    const checksum = getSystemChecksum(defragmentedStorageBlocks);
 
-    console.log("Defragmented storage string:", defragmentedStorageString);
+    console.log("System checksum:", checksum);
 
-    const systemChecksum = getSystemChecksum(defragmentedStorageString);
+    const defragmentedByFileStorageBlocks =
+        defragmentStorageByFiles(storageBlocks);
+    const checksum2 = getSystemChecksum(defragmentedByFileStorageBlocks);
 
-    console.log("System checksum:", systemChecksum);
+    console.log("System checksum when defragmented by whole files:", checksum2);
 };
 
 solution();
