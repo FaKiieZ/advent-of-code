@@ -2,7 +2,8 @@ import { execSync } from "child_process";
 import { existsSync } from "fs";
 
 const getSolution = (year, day) => {
-    const directory = `${__dirname}\\${year}\\TypeScript\\${day}`;
+    const dayString = day.toString().padStart(2, "0");
+    const directory = `${__dirname}\\${year}\\TypeScript\\${dayString}`;
     const file = `${directory}\\solution.ts`;
 
     return { directory, file };
