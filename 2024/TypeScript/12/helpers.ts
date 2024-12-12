@@ -1,9 +1,10 @@
+export class Position {
+    row: number;
+    col: number;
+}
+
 export class Area {
-    constructor(
-        identifier: number,
-        plant: string,
-        positions: { row: number; col: number }[]
-    ) {
+    constructor(identifier: number, plant: string, positions: Position[]) {
         this.identifier = identifier;
         this.plant = plant;
         this.positions = positions;
@@ -11,7 +12,7 @@ export class Area {
 
     identifier: number;
     plant: string;
-    positions: { row: number; col: number }[];
+    positions: Position[];
 
     getAreaLength(): number {
         return this.positions.length;
@@ -57,217 +58,17 @@ export class Area {
             0
         );
 
-        // console.log("touchingPositionsOfOtherAreas", {
-        //     touchingPositionsOfOtherAreas: touchingPositionsOfOtherAreas.length,
-        //     posLength: this.positions.length,
-        //     amountOfPositionsTouchingBorder,
-        // });
-
         return (
             touchingPositionsOfOtherAreas.length +
             amountOfPositionsTouchingBorder
         );
     }
 
-    // TODO: sides is scuffed
     getAmountOfSides(): number {
-        const allTopSideFlatted = this.positions
-            .map((pos) => {
-                const topPos = { row: pos.row - 1, col: pos.col };
-                const isOffArea = !this.positions.some(
-                    (ap) => ap.row === topPos.row && ap.col === topPos.col
-                );
-
-                if (isOffArea) {
-                    return topPos;
-                } else {
-                    return null;
-                }
-            })
-            .filter((p) => !!p);
-
-        const allRightSideFlatted = this.positions
-            .map((pos) => {
-                const topPos = { row: pos.row, col: pos.col + 1 };
-                const isOffArea = !this.positions.some(
-                    (ap) => ap.row === topPos.row && ap.col === topPos.col
-                );
-
-                if (isOffArea) {
-                    return topPos;
-                } else {
-                    return null;
-                }
-            })
-            .filter((p) => !!p);
-        const allBottomSideFlatted = this.positions
-            .map((pos) => {
-                const topPos = { row: pos.row + 1, col: pos.col };
-                const isOffArea = !this.positions.some(
-                    (ap) => ap.row === topPos.row && ap.col === topPos.col
-                );
-
-                if (isOffArea) {
-                    return topPos;
-                } else {
-                    return null;
-                }
-            })
-            .filter((p) => !!p);
-        const allLeftSideFlatted = this.positions
-            .map((pos) => {
-                const topPos = { row: pos.row, col: pos.col - 1 };
-                const isOffArea = !this.positions.some(
-                    (ap) => ap.row === topPos.row && ap.col === topPos.col
-                );
-
-                if (isOffArea) {
-                    return topPos;
-                } else {
-                    return null;
-                }
-            })
-            .filter((p) => !!p);
-
-        const topSides = [];
-        allTopSideFlatted.forEach((p) => {
-            if (
-                topSides.some((ts) =>
-                    ts.some((sp) => sp.row === p.row && sp.col === p.col)
-                )
-            ) {
-                return;
-            }
-
-            let positionToCheck = p;
-            let hasNextSides = true;
-            let side = [p];
-            while (hasNextSides) {
-                hasNextSides = allTopSideFlatted.some(
-                    (ap) =>
-                        ap.row === positionToCheck.row &&
-                        ap.col === positionToCheck.col + 1
-                );
-
-                positionToCheck = hasNextSides
-                    ? {
-                          row: positionToCheck.row,
-                          col: positionToCheck.col + 1,
-                      }
-                    : null;
-
-                if (positionToCheck) {
-                    side.push(positionToCheck);
-                }
-            }
-
-            topSides.push(side);
-        });
-
-        const rightSides = [];
-        allRightSideFlatted.forEach((p) => {
-            if (
-                rightSides.some((ts) =>
-                    ts.some((sp) => sp.row === p.row && sp.col === p.col)
-                )
-            ) {
-                return;
-            }
-
-            let positionToCheck = p;
-            let hasNextSides = true;
-            let side = [p];
-            while (hasNextSides) {
-                hasNextSides = allRightSideFlatted.some(
-                    (ap) =>
-                        ap.row === positionToCheck.row + 1 &&
-                        ap.col === positionToCheck.col
-                );
-
-                positionToCheck = hasNextSides
-                    ? {
-                          row: positionToCheck.row + 1,
-                          col: positionToCheck.col,
-                      }
-                    : null;
-
-                if (positionToCheck) {
-                    side.push(positionToCheck);
-                }
-            }
-
-            rightSides.push(side);
-        });
-
-        const bottomSides = [];
-        allBottomSideFlatted.forEach((p) => {
-            if (
-                bottomSides.some((ts) =>
-                    ts.some((sp) => sp.row === p.row && sp.col === p.col)
-                )
-            ) {
-                return;
-            }
-
-            let positionToCheck = p;
-            let hasNextSides = true;
-            let side = [p];
-            while (hasNextSides) {
-                hasNextSides = allBottomSideFlatted.some(
-                    (ap) =>
-                        ap.row === positionToCheck.row &&
-                        ap.col === positionToCheck.col + 1
-                );
-
-                positionToCheck = hasNextSides
-                    ? {
-                          row: positionToCheck.row,
-                          col: positionToCheck.col + 1,
-                      }
-                    : null;
-
-                if (positionToCheck) {
-                    side.push(positionToCheck);
-                }
-            }
-
-            bottomSides.push(side);
-        });
-
-        const leftSides = [];
-        allLeftSideFlatted.forEach((p) => {
-            if (
-                leftSides.some((ts) =>
-                    ts.some((sp) => sp.row === p.row && sp.col === p.col)
-                )
-            ) {
-                return;
-            }
-
-            let positionToCheck = p;
-            let hasNextSides = true;
-            let side = [p];
-            while (hasNextSides) {
-                hasNextSides = allLeftSideFlatted.some(
-                    (ap) =>
-                        ap.row === positionToCheck.row + 1 &&
-                        ap.col === positionToCheck.col
-                );
-
-                positionToCheck = hasNextSides
-                    ? {
-                          row: positionToCheck.row + 1,
-                          col: positionToCheck.col,
-                      }
-                    : null;
-
-                if (positionToCheck) {
-                    side.push(positionToCheck);
-                }
-            }
-
-            leftSides.push(side);
-        });
+        const topSides = this.getSidesByPositionOffset(-1, true);
+        const bottomSides = this.getSidesByPositionOffset(+1, true);
+        const rightSides = this.getSidesByPositionOffset(+1, false);
+        const leftSides = this.getSidesByPositionOffset(-1, false);
 
         return (
             topSides.length +
@@ -276,12 +77,68 @@ export class Area {
             leftSides.length
         );
     }
+
+    private getSidesByPositionOffset(offset: number, isRowOffset: boolean) {
+        const sides = [];
+        const allSidePositions = this.positions
+            .map((pos) => {
+                const offsetPosition = {
+                    row: pos.row + (isRowOffset ? offset : 0),
+                    col: pos.col + (!isRowOffset ? offset : 0),
+                };
+                const isOffArea = !this.positions.some(
+                    (ap) =>
+                        ap.row === offsetPosition.row &&
+                        ap.col === offsetPosition.col
+                );
+
+                if (isOffArea) {
+                    return offsetPosition;
+                } else {
+                    return null;
+                }
+            })
+            .filter((p) => !!p)
+            .sort((a, b) => a.row - b.row + a.col - b.col);
+
+        allSidePositions.forEach((p) => {
+            if (
+                sides.some((s) =>
+                    s.some((sp) => sp.row === p.row && sp.col === p.col)
+                )
+            ) {
+                return;
+            }
+
+            let positionToCheck = p;
+            let hasNextSides = true;
+            let side = [p];
+            while (hasNextSides) {
+                hasNextSides = allSidePositions.some(
+                    (ap) =>
+                        ap.row ===
+                            positionToCheck.row + (isRowOffset ? 0 : 1) &&
+                        ap.col === positionToCheck.col + (isRowOffset ? 1 : 0)
+                );
+
+                if (hasNextSides) {
+                    positionToCheck = {
+                        row: positionToCheck.row + (isRowOffset ? 0 : 1),
+                        col: positionToCheck.col + (isRowOffset ? 1 : 0),
+                    };
+
+                    side.push(positionToCheck);
+                }
+            }
+
+            sides.push(side);
+        });
+
+        return sides;
+    }
 }
 
-export const isPositionTouchingArea = (
-    pos: { row: number; col: number },
-    area: Area
-): boolean => {
+export const isPositionTouchingArea = (pos: Position, area: Area): boolean => {
     return area.positions.some(
         (p) =>
             ((p.row === pos.row - 1 || p.row === pos.row + 1) &&
@@ -293,7 +150,7 @@ export const isPositionTouchingArea = (
 
 let identifierCounter = 0;
 
-export const getTouchingPositions = (pos: { row: number; col: number }) => {
+export const getTouchingPositions = (pos: Position) => {
     return [
         { row: pos.row + 1, col: pos.col },
         { row: pos.row - 1, col: pos.col },
@@ -303,7 +160,7 @@ export const getTouchingPositions = (pos: { row: number; col: number }) => {
 };
 
 export const getArea = (
-    position: { row: number; col: number },
+    position: Position,
     cell: string,
     data: string[][]
 ): Area => {
@@ -348,12 +205,6 @@ export const getArea = (
         positionsToLookAround = unique;
         allAreaPositions.push(...unique);
         count++;
-
-        console.log("in loop", {
-            count,
-            cell,
-            pos: unique.length,
-        });
     }
 
     const uniquePositions = [
@@ -365,13 +216,11 @@ export const getArea = (
         };
     });
 
-    console.log("new areaa", cell);
-
     return new Area(identifierCounter++, cell, uniquePositions);
 };
 
 export const getAreas = (data: string[][]): Area[] => {
-    const searchedPositions: { row: number; col: number }[] = [];
+    const searchedPositions: Position[] = [];
     const areas: Area[] = [];
     const maxRows = data.length;
     const maxCols = data[0].length;

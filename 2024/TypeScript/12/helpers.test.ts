@@ -40,11 +40,6 @@ describe("day 12", () => {
         const result = areas.reduce((acc, area) => {
             const areaLength = area.getAreaLength();
             const perimeter = area.getPerimeter(areas, 9, 9);
-            console.log("perimeter", {
-                plant: area.plant,
-                areaLength,
-                perimeter,
-            });
             return acc + areaLength * perimeter;
         }, 0);
 
@@ -61,7 +56,7 @@ describe("day 12", () => {
         expect(sides).toEqual(20);
     });
 
-    it("gets the areas by side by string", () => {
+    it("gets the areas by string and calculates the price with the sides", () => {
         const splitted = areaString2.split("\n").map((line) => line.split(""));
 
         const areas = getAreas(splitted);
@@ -71,14 +66,9 @@ describe("day 12", () => {
         const result = areas.reduce((acc, area) => {
             const areaLength = area.getAreaLength();
             const amountOfSides = area.getAmountOfSides();
-            console.log("amountOfSides", {
-                plant: area.plant,
-                areaLength,
-                amountOfSides,
-            });
             return acc + areaLength * amountOfSides;
         }, 0);
 
-        expect(result).toEqual(1930);
+        expect(result).toEqual(1206);
     });
 });

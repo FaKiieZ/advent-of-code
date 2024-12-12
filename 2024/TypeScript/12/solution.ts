@@ -8,7 +8,7 @@ export const solution = () => {
 
     const areas = getAreas(data);
 
-    console.log("Found areas", areas.length);
+    console.log("Found areas:", areas.length);
 
     const result = areas.reduce((acc, area) => {
         return (
@@ -18,13 +18,16 @@ export const solution = () => {
         );
     }, 0);
 
-    console.log("Sum", result);
+    console.log("Total price calculated by area length * perimeter:", result);
 
     const resultWithSides = areas.reduce((acc, area) => {
         return acc + area.getAreaLength() * area.getAmountOfSides();
     }, 0);
 
-    console.log("Sum", resultWithSides);
+    console.log(
+        "Total price calculated by area length * amount of sides:",
+        resultWithSides
+    );
 };
 
 solution();
