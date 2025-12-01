@@ -1,6 +1,5 @@
 import { readInputFile } from "../../../lib";
 import {
-    findAllDistinctTrailsOfTrailhead,
     getAllTrailheadRatingsOfMap,
     getAllTrailheadScoresOfMap,
 } from "./helpers";
