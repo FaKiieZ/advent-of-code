@@ -2,12 +2,32 @@
 
 ## TypeScript Solutions
 
-### Build & Run
+### Quick Start
 
--   `npm i`
--   `npm run start` to run all solutions of all years
--   `npm run start <year>` to run all solutions of the given year
--   `npm run start <year> <day>` to run the solution of the given year and day
+```bash
+npm install
+```
+
+### Run Solutions
+
+```bash
+# Run ALL solutions (all years and days in order)
+npm start
+
+# Run specific solutions
+npm run 2025 03        # Run both parts
+npm run 2025 03 1      # Run part 1 only
+npm run 2025 03 2      # Run part 2 only
+npm run 2024 01        # Run both parts
+
+# Create a new day template
+npm run scaffold 2025 04
+
+# Run tests
+npm test
+```
+
+**📖 For detailed TypeScript setup and workflow, see [TYPESCRIPT-SETUP.md](TYPESCRIPT-SETUP.md)**
 
 ## Python Solution
 

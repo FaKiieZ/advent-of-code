@@ -1,4 +1,10 @@
-import { readInputFile } from "../../../lib";
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 import {
     calculateMinCostToGetToTarget,
     getButtonsWithTargetsByInput,
@@ -6,7 +12,7 @@ import {
 
 export const solution = () => {
     const buttonsWithTargets = getButtonsWithTargetsByInput(
-        readInputFile(__dirname)
+        readFileSync(join(__dirname, 'input.txt'), 'utf-8').trim()
     );
 
     // TODO: find the case which is not correct... currently all the test cases work though

@@ -1,11 +1,17 @@
-import { readInputFile } from "../../../lib";
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 import {
     getAllTrailheadRatingsOfMap,
     getAllTrailheadScoresOfMap,
 } from "./helpers";
 
 export const solution = () => {
-    const data = readInputFile(__dirname)
+    const data = readFileSync(join(__dirname, 'input.txt'), 'utf-8').trim()
         .split("\r\n")
         .map((line) => line.split(""))
         .map((line) => line.map(Number));

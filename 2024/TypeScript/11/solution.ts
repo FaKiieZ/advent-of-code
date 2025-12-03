@@ -1,4 +1,9 @@
-import { readInputFile } from "../../../lib";
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const cache = {};
 export const blink = (stone: number, blinks: number): number => {
@@ -32,7 +37,7 @@ export const blink = (stone: number, blinks: number): number => {
 export const solution = () => {
     console.time();
 
-    const data = readInputFile(__dirname).split(" ").map(Number);
+    const data = readFileSync(join(__dirname, 'input.txt'), 'utf-8').trim().split(" ").map(Number);
 
     const amountOfStones1 = data
         .map((stone) => blink(stone, 25))

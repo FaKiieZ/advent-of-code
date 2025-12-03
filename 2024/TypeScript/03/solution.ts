@@ -1,4 +1,9 @@
-import { readInputFile } from "../../../lib";
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 function solution1(data: string): void {
     const regex = /mul\((\d+),(\d+)\)/g;
@@ -79,7 +84,7 @@ function solution2(data: string): void {
 }
 
 function solution(): void {
-    const data = readInputFile(__dirname);
+    const data = readFileSync(join(__dirname, 'input.txt'), 'utf-8').trim();
 
     solution1(data);
     solution2(data);

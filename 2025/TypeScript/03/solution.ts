@@ -1,10 +1,10 @@
-import { readInputFile } from "../../../lib";
+import { readInput } from "../../../lib.js";
 
 export const findHighestNumberInValidRange = (
     bank: number[],
     afterIndex: number,
     amountOfBatteriesToUse: number
-): { number: number; index: number } => {
+): { number: number; index: number } | null => {
     let sortedNumbers = new Set(
         bank.slice(afterIndex + 1).sort((a, b) => b - a)
     );
@@ -24,6 +24,8 @@ export const findHighestNumberInValidRange = (
             };
         }
     }
+
+    return null;
 };
 
 export const findHighestNumberAfterIndex = (
@@ -35,12 +37,17 @@ export const findHighestNumberAfterIndex = (
 };
 
 export const solution = () => {
-    const batteryBanks = readInputFile(__dirname)
+    const input = readInput();
+    const batteryBanks = input
         .split("\r\n")
         .map((bank) => bank.split("").map(Number));
 
     const activatedBatteriesPerBank = batteryBanks.map((bank) => {
         const firstMatch = findHighestNumberInValidRange(bank, -1, 2);
+        if (!firstMatch) {
+            throw "No first match found.. there is no possible combination";
+        }
+
         const secondNumber = findHighestNumberAfterIndex(
             bank,
             firstMatch.index
@@ -67,12 +74,15 @@ export const solution = () => {
                 searchAfterIndex,
                 i
             );
+            if (!match) {
+                throw "No match found.. there is no possible combination";
+            }
 
             searchAfterIndex = match.index;
             activatedBatteries.push(match.number);
         }
 
-        return Number(activatedBatteries.reduce((v, c) => `${v}${c}`));
+        return Number(activatedBatteries.reduce((v, c) => `${v}${c}`, ""));
     });
 
     const sumOfActivatedBatteries2 = activatedBatteriesPerBank2.reduce(

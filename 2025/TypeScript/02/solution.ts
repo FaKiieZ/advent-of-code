@@ -1,4 +1,10 @@
-import { readInputFile } from "../../../lib";
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 import {
     getIdRanges,
     getInvalidIdsPerRange,
@@ -6,7 +12,7 @@ import {
 } from "./helpers";
 
 export const solution = () => {
-    const data = readInputFile(__dirname).split(",");
+    const data = readFileSync(join(__dirname, 'input.txt'), 'utf-8').trim().split(",");
 
     const idRanges = getIdRanges(data);
 

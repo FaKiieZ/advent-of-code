@@ -1,4 +1,4 @@
-import { getAntinodePositionsForAntennas } from "./helpers";
+import { AntennaInfos, getAntinodePositionsForAntennas } from "./helpers";
 
 describe("getAntinodePositionsForAntennas", () => {
     it("should return the correct antinode positions", () => {
@@ -21,7 +21,7 @@ describe("getAntinodePositionsForAntennas", () => {
             { identifier: "a", rowIndex: 1, colIndex: 1 },
             { identifier: "a", rowIndex: 3, colIndex: 3 },
         ];
-        const expectedAntinodePositions = [];
+        const expectedAntinodePositions: AntennaInfos[] = [];
 
         const result1 = getAntinodePositionsForAntennas(antennas, 5, 4);
         const result2 = getAntinodePositionsForAntennas(antennas, 4, 5);

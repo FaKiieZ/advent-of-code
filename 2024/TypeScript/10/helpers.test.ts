@@ -19,7 +19,7 @@ describe("day 10", () => {
 
     it("should calculate the trailhead score", () => {
         const points = getPoints(mapFromExample);
-        const scores = [];
+        const scores: number[] = [];
         points
             .filter((p) => p.isTrailhead)
             .forEach((trailhead) => {
@@ -37,6 +37,10 @@ describe("day 10", () => {
         const points = getPoints(mapWithTwoUniqueTrails);
 
         const trailhead = points.find((p) => p.isTrailhead);
+        if (!trailhead) {
+            fail("trailhead is undefined");
+        }
+
         const routes = findAllDistinctTrailsOfTrailhead(
             trailhead,
             mapWithTwoUniqueTrails

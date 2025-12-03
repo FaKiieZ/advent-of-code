@@ -1,16 +1,20 @@
 {
+    "type": "module",
     "scripts": {
-        "clean": "tsc --build --clean",
-        "build": "npm run clean && tsc",
-        "start": "npm run build && ts-node index.ts",
-        "test": "npm run clean && jest"
+        "2024": "npm run dev run.ts 2024",
+        "2025": "npm run dev run.ts 2025",
+        "test": "jest",
+        "dev": "tsx",
+        "scaffold": "npm run dev scaffold.ts",
+        "start": "npm run dev run-all.ts"
     },
     "devDependencies": {
-        "@types/jest": "^29.5.14",
-        "jest": "^29.7.0",
-        "ts-jest": "^29.2.5",
-        "ts-node": "^10.9.2",
-        "typescript": "^5.7.2"
+        "@types/jest": "^30.0.0",
+        "@types/node": "^24.10.1",
+        "jest": "^30.2.0",
+        "ts-jest": "^29.4.6",
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3"
     },
     "prettier": {
         "tabWidth": 4

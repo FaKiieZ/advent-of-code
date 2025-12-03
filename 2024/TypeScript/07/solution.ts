@@ -1,8 +1,14 @@
-import { readInputFile } from "../../../lib";
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 import { canBeSolvedWithPossibleOperators } from "./helpers";
 
 export const solution = () => {
-    const data = readInputFile(__dirname).split("\r\n");
+    const data = readFileSync(join(__dirname, 'input.txt'), 'utf-8').trim().split("\r\n");
 
     const resultsWithValues = data.map((line) => {
         const splittedData = line.split(":");
