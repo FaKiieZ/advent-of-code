@@ -1,7 +1,6 @@
-import { mkdirSync, writeFileSync, existsSync } from "fs";
-import { join } from "path";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -44,7 +43,7 @@ run(part1, part2);
 
 // Template for helpers file
 const helpersTemplate = `export function parseInput(input: string): any[] {
-    return input.split('\\n').map(line => line.trim());
+    return input.split('\\r\\n').map(line => line.trim());
 }`;
 
 // Template for test file
