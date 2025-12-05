@@ -42,7 +42,7 @@ run(part1, part2);
 `;
 
 // Template for helpers file
-const helpersTemplate = `export function parseInput(input: string): any[] {
+const helpersTemplate = `export function parseInput(input: string): string[] {
     return input.split('\\r\\n').map(line => line.trim());
 }`;
 
