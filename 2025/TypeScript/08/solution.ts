@@ -6,8 +6,7 @@ function part1(input: string): number {
 }
 
 function part2(input: string): number {
-    // TODO: Implement part 2
-    return 0;
+    return getSumOfMultipliedXOfLastTwoBoxesCombined(input);
 }
 
 function getSumOfMultipliedCircuitSizes(
@@ -16,78 +15,70 @@ function getSumOfMultipliedCircuitSizes(
     amountOfLargestCircuitsToTake: number
 ): number {
     const coordinates = parseInput(input);
+    const closestConnections = getClosestCoordinatePairs(coordinates);
 
-    const usedCoordinatesPairs: Coordinates[][] = [];
-
-    const otherCoordinatesWithDistances = coordinates.map((c) => {
-        const distancesToOtherBoxes = coordinates
-            .filter(
-                (c2) =>
-                    c2 !== c &&
-                    !usedCoordinatesPairs.some(
-                        ([u1, u2]) =>
-                            (u1 === c || u2 === c) && (u1 === c2 || u2 === c2)
-                    )
-            )
-            .map((c2) => ({
-                coordinate: c2,
-                distance: getDistanceBetweenJunctionBoxes(c, c2),
-            }));
-
-        const closestCoordinate = distancesToOtherBoxes.sort(
-            (a, b) => a.distance - b.distance
-        )[0];
-
-        usedCoordinatesPairs.push([c, closestCoordinate.coordinate]);
-
-        return {
-            coordinate: c,
-            closestCoordinate: closestCoordinate.coordinate,
-            distance: closestCoordinate.distance,
-        };
-    });
-
-    otherCoordinatesWithDistances.sort((a, b) => a.distance - b.distance);
-
-    const circuits: Coordinates[][] = [];
+    const circuits = coordinates.map((c) => new Set([c.id]));
     for (let i = 0; i < amountOfConnectionsToMake; i++) {
-        const coordinatesToConnect = otherCoordinatesWithDistances[i];
+        const coordinatesToConnect = closestConnections[i];
 
-        const matchingCircuit = circuits.find((c) =>
-            c.some(
-                (co) =>
-                    areCoordinatesEqual(co, coordinatesToConnect.coordinate) ||
-                    areCoordinatesEqual(
-                        co,
-                        coordinatesToConnect.closestCoordinate
-                    )
-            )
+        const circuitA = circuits.findIndex((c) =>
+            c.has(coordinatesToConnect.coordinate1.id)
         );
-        if (matchingCircuit) {
-            matchingCircuit.push(
-                coordinatesToConnect.coordinate,
-                coordinatesToConnect.closestCoordinate
+        const circuitB = circuits.findIndex((c) =>
+            c.has(coordinatesToConnect.coordinate2.id)
+        );
+
+        if (circuitA === circuitB) {
+            continue;
+        }
+
+        for (const coord of circuits[circuitB]) {
+            circuits[circuitA].add(coord);
+        }
+
+        circuits.splice(circuitB, 1);
+    }
+
+    return circuits
+        .sort((a, b) => b.size - a.size)
+        .slice(0, amountOfLargestCircuitsToTake)
+        .reduce((p, v) => p * v.size, 1);
+}
+
+function getSumOfMultipliedXOfLastTwoBoxesCombined(input: string): number {
+    const coordinates = parseInput(input);
+    const closestConnections = getClosestCoordinatePairs(coordinates);
+
+    const circuits = coordinates.map((c) => new Set([c.id]));
+    while (circuits.length > 1) {
+        for (const coordinatesToConnect of closestConnections) {
+            const circuitA = circuits.findIndex((c) =>
+                c.has(coordinatesToConnect.coordinate1.id)
             );
-            // console.log("pushing to matchingCircuit", matchingCircuit);
-        } else {
-            circuits.push([
-                coordinatesToConnect.coordinate,
-                coordinatesToConnect.closestCoordinate,
-            ]);
-            // console.log("pushing new circuit", coordinatesToConnect);
+            const circuitB = circuits.findIndex((c) =>
+                c.has(coordinatesToConnect.coordinate2.id)
+            );
+
+            if (circuitA === circuitB) {
+                continue;
+            }
+
+            for (const coord of circuits[circuitB]) {
+                circuits[circuitA].add(coord);
+            }
+
+            if (circuits.length === 2) {
+                return (
+                    coordinatesToConnect.coordinate1.x *
+                    coordinatesToConnect.coordinate2.x
+                );
+            }
+
+            circuits.splice(circuitB, 1);
         }
     }
 
-    const mergedCircuits = mergeCircuits(circuits);
-
-    const largestUniqueCircuits = mergedCircuits
-        .map((c) => new Set(c))
-        .sort((a, b) => b.size - a.size)
-        .slice(0, amountOfLargestCircuitsToTake);
-
-    // console.log(largestUniqueCircuits);
-
-    return largestUniqueCircuits.reduce((p, v) => p * v.size, 1);
+    return 0;
 }
 
 function getDistanceBetweenJunctionBoxes(
@@ -100,35 +91,22 @@ function getDistanceBetweenJunctionBoxes(
     return Math.sqrt(x + y + z);
 }
 
-// TODO fix merging
-function mergeCircuits(circuits: Coordinates[][]): Coordinates[][] {
-    const newCircuits: Coordinates[][] = [];
+function getClosestCoordinatePairs(coordinates: Coordinates[]) {
+    const pairs = [];
+    for (let i = 0; i < coordinates.length; i++) {
+        for (let j = i + 1; j < coordinates.length; j++) {
+            const c1 = coordinates[i];
+            const c2 = coordinates[j];
 
-    console.log(circuits.length);
-    for (const circuit of circuits) {
-        // console.log("circuit to check", circuit);
-        const matchingCircuit = newCircuits.find(
-            (nc) =>
-                nc !== circuit &&
-                nc.some((co) =>
-                    circuit.some((co2) => areCoordinatesEqual(co, co2))
-                )
-        );
-
-        // console.log("matching circuit", matchingCircuit);
-
-        if (matchingCircuit) {
-            matchingCircuit.push(...circuit);
-        } else {
-            newCircuits.push(circuit);
+            pairs.push({
+                coordinate1: c1,
+                coordinate2: c2,
+                distance: getDistanceBetweenJunctionBoxes(c1, c2),
+            });
         }
     }
 
-    return newCircuits;
+    return pairs.sort((a, b) => a.distance - b.distance);
 }
 
-function areCoordinatesEqual(a: Coordinates, b: Coordinates): boolean {
-    return a.x === b.x && a.y === b.y && a.z === b.z;
-}
-
-run(part1, part2);
+run(part1, part2, "Connecting junction boxes ⚡🔌💡");
